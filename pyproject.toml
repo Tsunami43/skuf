@@ -1,0 +1,22 @@
+[project]
+name = "skuf"
+version = "0.1.1"
+description = "Minimal Dependency Injection Container for Python"
+repository = "https://github.com/Tsunami43/skuf.git"
+keywords = ["di", "dependency-injection", "container", "python"]
+license = "MIT"
+authors = [
+    {name = "MentorSisek",email = "n3m0_22@mail.ru"}
+]
+readme = "README.md"
+requires-python = ">=3.7"
+dependencies = [
+]
+
+[tool.poetry.urls]
+"Homepage" = "https://github.com/Tsunami43/skuf.git"
+
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
