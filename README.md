@@ -1,13 +1,14 @@
 # Skuf 
-![Python](https://img.shields.io/badge/python-3.7%2B-blue?logo=python&logoColor=white)![Version](https://img.shields.io/badge/version-0.1.1-green)
+![Python](https://img.shields.io/badge/python-3.7%2B-blue?logo=python&logoColor=white)![Version](https://img.shields.io/badge/version-0.2.0-green)
 
-Minimal Dependency Injection Container for Python
+Minimal Dependency Injection & Configuration Framework for Python
 
 ## 🚀 Features
 
-- ✨ Lightweight and minimal
-- ✅ Pythonic and explicit
-- 🧱 Suitable for scripts, CLIs, and microservices
+- ⚡️ Lightweight and zero-dependency
+- 🧩 Simple Dependency Injection container
+- 🔐 Type-safe `.env`-based configuration loader (like `pydantic.BaseSettings`)
+- 🧱 Suitable for scripts, CLI tools, microservices
 
 ## 📦 Installation
 
@@ -15,7 +16,7 @@ Minimal Dependency Injection Container for Python
 pip install skuf
 ```
 
-## 📝 Usage
+## 🧰 Dependency Injection
 ```python
 from skuf import DIContainer, Dependency
 
@@ -39,3 +40,36 @@ test_func()
 # Hello, World!
 # Hello, World! From a function!
 ```
+
+
+## ⚙️ Environment Settings
+```python
+# .env
+API_KEY=supersecret
+TIMEOUT=5
+DEBUG=true
+RETRIES=3
+ADMINS=123|456
+
+# settings.py
+from skuf import BaseSettings
+from typing import List
+
+class Settings(BaseSettings):
+    api_key: str
+    timeout: int
+    debug: bool
+    retries: int
+    admins: List[int]
+
+settings = Settings()
+
+print(settings.api_key)   # supersecret
+print(settings.timeout)   # 5
+print(settings.debug)     # True
+print(settings.admins)    # [123, 456]
+```
+
+✅ Supports types:
+* str, int, float, bool
+* List[str], List[int], List[float] (via pipe-separated values like A|B|C)
