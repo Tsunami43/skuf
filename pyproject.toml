@@ -1,6 +1,6 @@
 [project]
 name = "skuf"
-version = "0.2.0a"
+version = "0.2.1a"
 description = "Minimal Dependency Injection & Configuration Framework for Python"
 repository = "https://github.com/Tsunami43/skuf.git"
 keywords = ["di", "dependency-injection", "container", "python", "env"]

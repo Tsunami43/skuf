@@ -100,7 +100,7 @@ class BaseSettings:
             subtype = typ.__args__[0]
             parts = [p.strip() for p in raw_value.split("|")]
             if subtype is int:
-                return [int(p) for p in parts if p.isdigit()]
+                return [int(p) for p in parts if p.lstrip("-").isdigit()]
             if subtype is float:
                 return [float(p) for p in parts]
             return parts  # List[str]
