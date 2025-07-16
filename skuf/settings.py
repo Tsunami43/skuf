@@ -60,7 +60,7 @@ class BaseSettings:
             if name not in self._values:
                 env_name = name.upper()
                 raw_value = os.getenv(env_name)
-                if raw_value is None:
+                if raw_value is None or raw_value.strip() == "":
                     raise AttributeError(f"Environment variable {env_name} is not set.")
                 value = self._parse_value(raw_value, self._types[name])
                 self._values[name] = value
