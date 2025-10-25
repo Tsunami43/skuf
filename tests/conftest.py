@@ -1,50 +1,87 @@
-import os
-from typing import List
-from unittest import TestCase
+"""
+Конфигурация тестов для модуля dependency injection.
+"""
+import pytest
+from typing import Any, Dict, Type
 
-from skuf import Dependency, BaseSettings
-
-
-class Logger:
-    def log(self, msg: str):
-        return msg
+from skuf.dependency.registry import DependencyRegistry
 
 
-class Service:
-    def __init__(self, logger: Logger):
-        self.logger = logger
-
-    def work(self):
-        return self.logger.log("Working")
-
-
-class Dummy:
-    pass
+@pytest.fixture(autouse=True)
+def clear_registry():
+    """Автоматически очищает реестр зависимостей перед каждым тестом."""
+    DependencyRegistry.clear()
+    yield
+    DependencyRegistry.clear()
 
 
-class TestSkuf(TestCase):
-    def setUp(self):
-        Dependency.clear()
+@pytest.fixture
+def sample_class():
+    """Простой класс для тестирования."""
+    class SampleClass:
+        def __init__(self, value: str = "default"):
+            self.value = value
+            
+        def get_value(self) -> str:
+            return self.value
+    
+    return SampleClass
 
 
-class TestSetUpBaseSettings(TestCase):
-    def setUp(self) -> None:
-        os.environ["TOKEN"] = "abc123"
-        os.environ["RETRIES"] = "3"
-        os.environ["DEBUG"] = "true"
-        os.environ["TIMEOUT"] = "2.5"
-        os.environ["SERVERS"] = "server1|server2|server3"
-        os.environ["PORTS"] = "8000|8001|8002"
+@pytest.fixture
+def context_manager_class():
+    """Класс с поддержкой context manager для тестирования."""
+    class ContextManagerClass:
+        def __init__(self, value: str = "context"):
+            self.value = value
+            self.entered = False
+            self.exited = False
+            
+        def __enter__(self):
+            self.entered = True
+            return self
+            
+        def __exit__(self, exc_type, exc_val, exc_tb):
+            self.exited = True
+            return False
+    
+    return ContextManagerClass
 
-    def tearDown(self) -> None:
-        for var in ["TOKEN", "RETRIES", "DEBUG", "TIMEOUT", "SERVERS", "PORTS"]:
-            os.environ.pop(var, None)
+
+@pytest.fixture
+def async_context_manager_class():
+    """Класс с поддержкой async context manager для тестирования."""
+    class AsyncContextManagerClass:
+        def __init__(self, value: str = "async_context"):
+            self.value = value
+            self.entered = False
+            self.exited = False
+            
+        async def __aenter__(self):
+            self.entered = True
+            return self
+            
+        async def __aexit__(self, exc_type, exc_val, exc_tb):
+            self.exited = True
+            return False
+    
+    return AsyncContextManagerClass
 
 
-class SettingsExample(BaseSettings):
-    token: str
-    retries: int
-    debug: bool
-    timeout: float
-    servers: List[str]
-    ports: List[int]
+@pytest.fixture
+def async_generator_class():
+    """Класс с поддержкой async generator для тестирования."""
+    class AsyncGeneratorClass:
+        def __init__(self, value: str = "async_generator"):
+            self.value = value
+            
+        def __aiter__(self):
+            return self
+            
+        async def __anext__(self):
+            if not hasattr(self, '_yielded'):
+                self._yielded = True
+                return self
+            raise StopAsyncIteration
+    
+    return AsyncGeneratorClass
