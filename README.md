@@ -1,5 +1,5 @@
 # Skuf 
-![Python](https://img.shields.io/badge/python-3.8%2B-blue?logo=python&logoColor=white)![Version](https://img.shields.io/badge/version-0.2.1-green)
+![Python](https://img.shields.io/badge/python-3.9%2B-blue?logo=python&logoColor=white)![Version](https://img.shields.io/badge/version-0.3.0-green)
 
 Minimal Dependency Injection & Configuration Framework for Python
 

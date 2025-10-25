@@ -1,9 +1,9 @@
 [project]
 name = "skuf"
-version = "0.2.1"
+version = "0.3.0"
 description = "Minimal Dependency Injection & Configuration Framework for Python"
 readme = "README.md"
-requires-python = ">=3.8"
+requires-python = ">=3.9"
 license = {text = "MIT"}
 authors = [
     {name = "Tsunami43", email = "n3m0_22@mail.ru"}
@@ -17,7 +17,6 @@ Issues = "https://github.com/Tsunami43/skuf/issues"
 
 [dependency-groups]
 dev = [
-    "pytest",
-    "pytest-asyncio>=0.24.0",
+    "pytest>=8.4.2",
     "ruff>=0.12.4",
 ]
