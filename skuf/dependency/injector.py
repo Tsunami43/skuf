@@ -9,7 +9,7 @@ __all__ = ["Injector"]
 
 
 class Injector:
-    """Автоматический инжектор зависимостей."""
+    """Automatic dependency injector."""
 
     @classmethod
     def inject(cls, func: Callable) -> Callable:

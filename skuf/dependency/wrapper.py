@@ -11,7 +11,7 @@ __all__ = ["Wrapper"]
 
 
 class Wrapper:
-    """Обёртки для автоматического управления контекстами зависимостей."""
+    """Wrappers for automatic dependency context management."""
 
     @classmethod
     def wrap_function_with_context(

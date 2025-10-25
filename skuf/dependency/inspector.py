@@ -4,7 +4,7 @@ __all__ = ["Inspector"]
 
 
 class Inspector:
-    """Утилиты для проверки типов объектов."""
+    """Utilities for checking object types."""
 
     @staticmethod
     def is_context_manager(obj: Any) -> bool:

@@ -1,5 +1,5 @@
 """
-Конфигурация тестов для модуля dependency injection.
+Test configuration for dependency injection module.
 """
 import pytest
 from typing import Any, Dict, Type
@@ -9,7 +9,7 @@ from skuf.dependency.registry import DependencyRegistry
 
 @pytest.fixture(autouse=True)
 def clear_registry():
-    """Автоматически очищает реестр зависимостей перед каждым тестом."""
+    """Automatically clears the dependency registry before each test."""
     DependencyRegistry.clear()
     yield
     DependencyRegistry.clear()
@@ -17,7 +17,7 @@ def clear_registry():
 
 @pytest.fixture
 def sample_class():
-    """Простой класс для тестирования."""
+    """Simple class for testing."""
     class SampleClass:
         def __init__(self, value: str = "default"):
             self.value = value
@@ -30,7 +30,7 @@ def sample_class():
 
 @pytest.fixture
 def context_manager_class():
-    """Класс с поддержкой context manager для тестирования."""
+    """Class with context manager support for testing."""
     class ContextManagerClass:
         def __init__(self, value: str = "context"):
             self.value = value
@@ -50,7 +50,7 @@ def context_manager_class():
 
 @pytest.fixture
 def async_context_manager_class():
-    """Класс с поддержкой async context manager для тестирования."""
+    """Class with async context manager support for testing."""
     class AsyncContextManagerClass:
         def __init__(self, value: str = "async_context"):
             self.value = value
@@ -70,7 +70,7 @@ def async_context_manager_class():
 
 @pytest.fixture
 def async_generator_class():
-    """Класс с поддержкой async generator для тестирования."""
+    """Class with async generator support for testing."""
     class AsyncGeneratorClass:
         def __init__(self, value: str = "async_generator"):
             self.value = value

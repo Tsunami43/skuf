@@ -1,19 +1,7 @@
-from typing import TypeVar, AsyncContextManager, ContextManager, AsyncGenerator, Protocol, Type, Generic
+from typing import TypeVar, Generic
 
 T = TypeVar("T")
 T_co = TypeVar("T_co", covariant=True)
-
-
-class ContextManagerFactory(Protocol[T_co]):
-    def __call__(self) -> ContextManager[T_co]: ...
-
-
-class AsyncContextManagerFactory(Protocol[T_co]):
-    def __call__(self) -> AsyncContextManager[T_co]: ...
-
-
-class AsyncGeneratorFactory(Protocol[T_co]):
-    def __call__(self) -> AsyncGenerator[T_co, None]: ...
 
 
 class Dependency(Generic[T_co]):
@@ -28,4 +16,4 @@ class Dependency(Generic[T_co]):
     pass
 
 
-__all__ = ["T", "T_co", "ContextManagerFactory", "AsyncContextManagerFactory", "AsyncGeneratorFactory", "Dependency"]
+__all__ = ["T", "T_co", "Dependency"]

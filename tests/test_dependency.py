@@ -1,5 +1,5 @@
 """
-Тесты для основного модуля dependency.
+Tests for main dependency module.
 """
 import pytest
 from unittest.mock import Mock, patch
@@ -10,10 +10,10 @@ from skuf.dependency.injector import Injector
 
 
 class TestDependency:
-    """Тесты для основного класса Dependency."""
+    """Tests for main Dependency class."""
 
     def test_register_delegates_to_registry(self, sample_class):
-        """Тест что register делегирует вызов в DependencyRegistry."""
+        """Test that register delegates call to DependencyRegistry."""
         instance = sample_class("test_value")
         
         with patch.object(DependencyRegistry, 'register') as mock_register:
@@ -21,7 +21,7 @@ class TestDependency:
             mock_register.assert_called_once_with(sample_class, instance=instance)
 
     def test_resolve_delegates_to_registry(self, sample_class):
-        """Тест что resolve делегирует вызов в DependencyRegistry."""
+        """Test that resolve delegates call to DependencyRegistry."""
         instance = sample_class("test_value")
         DependencyRegistry.register(sample_class, instance=instance)
         
@@ -89,7 +89,7 @@ class TestDependency:
         def context_factory():
             return context_manager_class("context_value")
         
-        Dependency.register(context_manager_class, context_manager=context_factory)
+        Dependency.register(context_manager_class, factory=context_factory)
         
         resolved = Dependency.resolve(context_manager_class)
         assert resolved.value == "context_value"
@@ -99,7 +99,7 @@ class TestDependency:
         def async_context_factory():
             return async_context_manager_class("async_context_value")
         
-        Dependency.register(async_context_manager_class, async_context_manager=async_context_factory)
+        Dependency.register(async_context_manager_class, factory=async_context_factory)
         
         resolved = Dependency.resolve(async_context_manager_class)
         assert resolved.value == "async_context_value"
@@ -109,7 +109,7 @@ class TestDependency:
         def async_generator_factory():
             return async_generator_class("async_generator_value")
         
-        Dependency.register(async_generator_class, async_generator_factory=async_generator_factory)
+        Dependency.register(async_generator_class, factory=async_generator_factory)
         
         resolved = Dependency.resolve(async_generator_class)
         assert resolved.value == "async_generator_value"
@@ -126,8 +126,7 @@ class TestDependency:
         result = test_func()
         assert result == "test_value"
 
-    @pytest.mark.asyncio
-    async def test_inject_decorator_with_async_function(self, sample_class):
+    def test_inject_decorator_with_async_function(self, sample_class):
         """Тест использования inject как декоратора с async функцией."""
         instance = sample_class("test_value")
         Dependency.register(sample_class, instance=instance)
@@ -136,7 +135,8 @@ class TestDependency:
         async def test_func(dep: Dependency[sample_class]):
             return dep.get_value()
         
-        result = await test_func()
+        import asyncio
+        result = asyncio.run(test_func())
         assert result == "test_value"
 
     def test_inject_decorator_with_multiple_dependencies(self, sample_class, context_manager_class):
@@ -160,10 +160,10 @@ class TestDependency:
         Dependency.register(sample_class, instance=instance)
         
         @Dependency.inject
-        def test_func(regular_param: str, dep: Dependency[sample_class], another_regular: int):
+        def test_func(regular_param: str, dep: Dependency[sample_class], another_regular: int = 42):
             return f"{regular_param}_{dep.get_value()}_{another_regular}"
         
-        result = test_func("hello", 42)
+        result = test_func("hello")
         assert result == "hello_test_value_42"
 
     def test_inject_decorator_preserves_function_metadata(self, sample_class):

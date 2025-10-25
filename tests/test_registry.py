@@ -1,5 +1,5 @@
 """
-Тесты для модуля registry.
+Tests for registry module.
 """
 import pytest
 import warnings
@@ -10,10 +10,10 @@ from skuf.dependency.registry import DependencyRegistry
 
 
 class TestDependencyRegistry:
-    """Тесты для класса DependencyRegistry."""
+    """Tests for DependencyRegistry class."""
 
     def test_register_with_instance(self, sample_class):
-        """Тест регистрации зависимости с конкретным экземпляром."""
+        """Test dependency registration with specific instance."""
         instance = sample_class("test_value")
         DependencyRegistry.register(sample_class, instance=instance)
         
@@ -22,7 +22,7 @@ class TestDependencyRegistry:
         assert resolved.value == "test_value"
 
     def test_register_with_factory(self, sample_class):
-        """Тест регистрации зависимости с фабрикой."""
+        """Test dependency registration with factory."""
         def factory():
             return sample_class("factory_value")
         
@@ -30,46 +30,46 @@ class TestDependencyRegistry:
         
         resolved = DependencyRegistry.resolve(sample_class)
         assert resolved.value == "factory_value"
-        # Каждый вызов должен создавать новый экземпляр
+        # Each call should create a new instance
         resolved2 = DependencyRegistry.resolve(sample_class)
         assert resolved is not resolved2
         assert resolved.value == resolved2.value
 
     def test_register_with_context_manager(self, context_manager_class):
-        """Тест регистрации зависимости с context manager."""
+        """Test dependency registration with context manager."""
         def context_factory():
             return context_manager_class("context_value")
         
-        DependencyRegistry.register(context_manager_class, context_manager=context_factory)
+        DependencyRegistry.register(context_manager_class, factory=context_factory)
         
         resolved = DependencyRegistry.resolve(context_manager_class)
         assert isinstance(resolved, context_manager_class)
         assert resolved.value == "context_value"
 
     def test_register_with_async_context_manager(self, async_context_manager_class):
-        """Тест регистрации зависимости с async context manager."""
+        """Test dependency registration with async context manager."""
         def async_context_factory():
             return async_context_manager_class("async_context_value")
         
-        DependencyRegistry.register(async_context_manager_class, async_context_manager=async_context_factory)
+        DependencyRegistry.register(async_context_manager_class, factory=async_context_factory)
         
         resolved = DependencyRegistry.resolve(async_context_manager_class)
         assert isinstance(resolved, async_context_manager_class)
         assert resolved.value == "async_context_value"
 
     def test_register_with_async_generator_factory(self, async_generator_class):
-        """Тест регистрации зависимости с async generator factory."""
+        """Test dependency registration with async generator factory."""
         def async_generator_factory():
             return async_generator_class("async_generator_value")
         
-        DependencyRegistry.register(async_generator_class, async_generator_factory=async_generator_factory)
+        DependencyRegistry.register(async_generator_class, factory=async_generator_factory)
         
         resolved = DependencyRegistry.resolve(async_generator_class)
         assert isinstance(resolved, async_generator_class)
         assert resolved.value == "async_generator_value"
 
     def test_register_with_default_constructor(self, sample_class):
-        """Тест регистрации зависимости с конструктором по умолчанию."""
+        """Test dependency registration with default constructor."""
         DependencyRegistry.register(sample_class)
         
         resolved = DependencyRegistry.resolve(sample_class)
@@ -77,7 +77,7 @@ class TestDependencyRegistry:
         assert resolved.value == "default"
 
     def test_register_priority_instance_over_factory(self, sample_class):
-        """Тест приоритета instance над factory."""
+        """Test priority of instance over factory."""
         instance = sample_class("instance_value")
         factory_instance = sample_class("factory_value")
         
@@ -91,7 +91,7 @@ class TestDependencyRegistry:
         assert resolved.value == "instance_value"
 
     def test_register_priority_factory_over_context_manager(self, sample_class):
-        """Тест приоритета factory над context_manager."""
+        """Test priority of factory over context_manager."""
         factory_instance = sample_class("factory_value")
         context_instance = sample_class("context_value")
         
@@ -103,8 +103,7 @@ class TestDependencyRegistry:
         
         DependencyRegistry.register(
             sample_class, 
-            factory=factory, 
-            context_manager=context_factory
+            factory=factory
         )
         
         resolved = DependencyRegistry.resolve(sample_class)
@@ -112,12 +111,12 @@ class TestDependencyRegistry:
         assert resolved.value == "factory_value"
 
     def test_resolve_unregistered_dependency(self, sample_class):
-        """Тест разрешения незарегистрированной зависимости."""
+        """Test resolving unregistered dependency."""
         with pytest.raises(ValueError, match="Dependency .* is not registered"):
             DependencyRegistry.resolve(sample_class)
 
     def test_resolve_with_factory_creates_new_instance(self, sample_class):
-        """Тест что factory создает новый экземпляр при каждом вызове."""
+        """Test that factory creates new instance on each call."""
         def factory():
             return sample_class("factory_value")
         
@@ -130,28 +129,23 @@ class TestDependencyRegistry:
         assert resolved1.value == resolved2.value
 
     def test_clear_registry(self, sample_class):
-        """Тест очистки реестра."""
+        """Test registry clearing."""
         instance = sample_class("test_value")
         DependencyRegistry.register(sample_class, instance=instance)
         
-        # Проверяем что зависимость зарегистрирована
+        # Check that dependency is registered
         resolved = DependencyRegistry.resolve(sample_class)
         assert resolved is instance
         
-        # Очищаем реестр
-        with warnings.catch_warnings(record=True) as w:
-            warnings.simplefilter("always")
-            DependencyRegistry.clear()
-            assert len(w) == 1
-            assert issubclass(w[0].category, UserWarning)
-            assert "Clearing the registry" in str(w[0].message)
+        # Clear registry
+        DependencyRegistry.clear()
         
-        # Проверяем что зависимость больше не зарегистрирована
+        # Check that dependency is no longer registered
         with pytest.raises(ValueError, match="Dependency .* is not registered"):
             DependencyRegistry.resolve(sample_class)
 
     def test_register_multiple_dependencies(self, sample_class, context_manager_class):
-        """Тест регистрации нескольких зависимостей."""
+        """Test registration of multiple dependencies."""
         instance1 = sample_class("value1")
         instance2 = context_manager_class("value2")
         
@@ -165,7 +159,7 @@ class TestDependencyRegistry:
         assert resolved2 is instance2
 
     def test_register_overwrite_existing(self, sample_class):
-        """Тест перезаписи существующей зависимости."""
+        """Test overwriting existing dependency."""
         instance1 = sample_class("value1")
         instance2 = sample_class("value2")
         
@@ -178,7 +172,7 @@ class TestDependencyRegistry:
         assert resolved2 is instance2
 
     def test_factory_with_side_effects(self, sample_class):
-        """Тест фабрики с побочными эффектами."""
+        """Test factory with side effects."""
         call_count = 0
         
         def factory():
@@ -196,33 +190,33 @@ class TestDependencyRegistry:
         assert resolved2.value == "call_2"
 
     def test_context_manager_factory_returns_context_manager(self, context_manager_class):
-        """Тест что context manager factory возвращает context manager."""
+        """Test that context manager factory returns context manager."""
         def context_factory():
             return context_manager_class("test")
         
-        DependencyRegistry.register(context_manager_class, context_manager=context_factory)
+        DependencyRegistry.register(context_manager_class, factory=context_factory)
         
         resolved = DependencyRegistry.resolve(context_manager_class)
         assert hasattr(resolved, "__enter__")
         assert hasattr(resolved, "__exit__")
 
     def test_async_context_manager_factory_returns_async_context_manager(self, async_context_manager_class):
-        """Тест что async context manager factory возвращает async context manager."""
+        """Test that async context manager factory returns async context manager."""
         def async_context_factory():
             return async_context_manager_class("test")
         
-        DependencyRegistry.register(async_context_manager_class, async_context_manager=async_context_factory)
+        DependencyRegistry.register(async_context_manager_class, factory=async_context_factory)
         
         resolved = DependencyRegistry.resolve(async_context_manager_class)
         assert hasattr(resolved, "__aenter__")
         assert hasattr(resolved, "__aexit__")
 
     def test_async_generator_factory_returns_async_generator(self, async_generator_class):
-        """Тест что async generator factory возвращает async generator."""
+        """Test that async generator factory returns async generator."""
         def async_generator_factory():
             return async_generator_class("test")
         
-        DependencyRegistry.register(async_generator_class, async_generator_factory=async_generator_factory)
+        DependencyRegistry.register(async_generator_class, factory=async_generator_factory)
         
         resolved = DependencyRegistry.resolve(async_generator_class)
         assert hasattr(resolved, "__aiter__")

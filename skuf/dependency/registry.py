@@ -1,13 +1,12 @@
-import warnings
 from typing import Type, Callable, Dict, Any, Optional, TypeVar
 
-from .types import T, ContextManagerFactory, AsyncContextManagerFactory, AsyncGeneratorFactory
+from .types import T
 
 __all__ = ["DependencyRegistry"]
 
 
 class DependencyRegistry:
-    """Реестр зависимостей с поддержкой различных фабрик."""
+    """Dependency registry with support for various factory types."""
     
     __registry: Dict[Type, Callable[[], Any]] = {}
 
@@ -18,9 +17,6 @@ class DependencyRegistry:
         *,
         instance: Optional[T] = None,
         factory: Optional[Callable[[], T]] = None,
-        context_manager: Optional[ContextManagerFactory[T]] = None,
-        async_context_manager: Optional[AsyncContextManagerFactory[T]] = None,
-        async_generator_factory: Optional[AsyncGeneratorFactory[T]] = None,
     ) -> None:
         """
         Register a dependency with the container.
@@ -29,23 +25,16 @@ class DependencyRegistry:
             dependency_cls: The class type to register.
             instance: A specific instance to use (singleton-style).
             factory: A factory function to generate the instance.
-            context_manager: A context manager factory.
-            async_context_manager: An async context manager factory.
-            async_generator_factory: An async generator factory.
+                     Can be a regular factory, context manager factory, 
+                     async context manager factory, or async generator factory.
 
         Notes:
-            Priority: instance > factory > context_manager > async_context_manager > async_generator_factory > default constructor
+            Priority: instance > factory > default constructor
         """
         if instance is not None:
             cls.__registry[dependency_cls] = lambda: instance
         elif factory is not None:
             cls.__registry[dependency_cls] = factory
-        elif context_manager is not None:
-            cls.__registry[dependency_cls] = context_manager
-        elif async_context_manager is not None:
-            cls.__registry[dependency_cls] = async_context_manager
-        elif async_generator_factory is not None:
-            cls.__registry[dependency_cls] = async_generator_factory
         else:
             cls.__registry[dependency_cls] = lambda: dependency_cls()
 
@@ -72,5 +61,4 @@ class DependencyRegistry:
     @classmethod
     def clear(cls) -> None:
         """Clear the entire registry of dependencies."""
-        warnings.warn("Clearing the registry", stacklevel=2)
         cls.__registry.clear()

@@ -1,24 +1,21 @@
 """
-Тесты для модуля types.
+Tests for types module.
 """
 import pytest
 from typing import ContextManager, AsyncContextManager, AsyncGenerator, Type, TypeVar
 
 from skuf.dependency.types import (
     T, T_co, 
-    ContextManagerFactory, 
-    AsyncContextManagerFactory, 
-    AsyncGeneratorFactory, 
     Dependency
 )
 
 
 class TestTypes:
-    """Тесты для типов в модуле types."""
+    """Tests for types in types module."""
 
     def test_dependency_generic_type(self):
-        """Тест что Dependency является Generic типом."""
-        # Проверяем что Dependency можно параметризовать
+        """Test that Dependency is a Generic type."""
+        # Check that Dependency can be parameterized
         dep_type = Dependency[str]
         assert hasattr(dep_type, '__origin__')
         assert dep_type.__origin__ is Dependency
@@ -205,14 +202,8 @@ class TestTypes:
 
     def test_protocol_inheritance(self):
         """Тест что протоколы правильно наследуются."""
-        # ContextManagerFactory должен быть протоколом
-        assert hasattr(ContextManagerFactory, '__protocol__') or hasattr(ContextManagerFactory, '_is_protocol')
-        
-        # AsyncContextManagerFactory должен быть протоколом
-        assert hasattr(AsyncContextManagerFactory, '__protocol__') or hasattr(AsyncContextManagerFactory, '_is_protocol')
-        
-        # AsyncGeneratorFactory должен быть протоколом
-        assert hasattr(AsyncGeneratorFactory, '__protocol__') or hasattr(AsyncGeneratorFactory, '_is_protocol')
+        # Протоколы были удалены, этот тест больше не актуален
+        pass
 
     def test_type_vars_covariance(self):
         """Тест ковариантности TypeVar T_co."""

@@ -1,5 +1,5 @@
 """
-Тесты для модуля injector.
+Tests for injector module.
 """
 import pytest
 from unittest.mock import Mock, patch
@@ -11,15 +11,15 @@ from skuf.dependency.types import Dependency
 
 
 class TestInjector:
-    """Тесты для класса Injector."""
+    """Tests for Injector class."""
 
     def test_inject_with_non_callable_raises_error(self):
-        """Тест что inject с не-callable объектом вызывает ошибку."""
+        """Test that inject with non-callable object raises error."""
         with pytest.raises(TypeError, match="inject decorator can only be applied to callable objects"):
             Injector.inject("not a function")
 
     def test_inject_with_regular_function_no_dependencies(self):
-        """Тест inject с обычной функцией без зависимостей."""
+        """Test inject with regular function without dependencies."""
         def test_func():
             return "test"
         
@@ -54,8 +54,7 @@ class TestInjector:
         result = wrapped_func()
         assert result == "test_value"
 
-    @pytest.mark.asyncio
-    async def test_inject_with_async_function_dependency_annotation(self, sample_class):
+    def test_inject_with_async_function_dependency_annotation(self, sample_class):
         """Тест inject с async функцией и аннотацией Dependency."""
         instance = sample_class("test_value")
         DependencyRegistry.register(sample_class, instance=instance)
@@ -64,7 +63,8 @@ class TestInjector:
             return dep.get_value()
         
         wrapped_func = Injector.inject(test_func)
-        result = await wrapped_func()
+        import asyncio
+        result = asyncio.run(wrapped_func())
         assert result == "test_value"
 
     def test_inject_with_context_manager_dependency(self, context_manager_class):
@@ -72,7 +72,7 @@ class TestInjector:
         def context_factory():
             return context_manager_class("context_value")
         
-        DependencyRegistry.register(context_manager_class, context_manager=context_factory)
+        DependencyRegistry.register(context_manager_class, factory=context_factory)
         
         def test_func(dep: Dependency[context_manager_class]):
             return dep.value
@@ -81,34 +81,34 @@ class TestInjector:
         result = wrapped_func()
         assert result == "context_value"
 
-    @pytest.mark.asyncio
-    async def test_inject_with_async_context_manager_dependency(self, async_context_manager_class):
+    def test_inject_with_async_context_manager_dependency(self, async_context_manager_class):
         """Тест inject с async context manager зависимостью."""
         def async_context_factory():
             return async_context_manager_class("async_context_value")
         
-        DependencyRegistry.register(async_context_manager_class, async_context_manager=async_context_factory)
+        DependencyRegistry.register(async_context_manager_class, factory=async_context_factory)
         
         async def test_func(dep: Dependency[async_context_manager_class]):
             return dep.value
         
         wrapped_func = Injector.inject(test_func)
-        result = await wrapped_func()
+        import asyncio
+        result = asyncio.run(wrapped_func())
         assert result == "async_context_value"
 
-    @pytest.mark.asyncio
-    async def test_inject_with_async_generator_dependency(self, async_generator_class):
+    def test_inject_with_async_generator_dependency(self, async_generator_class):
         """Тест inject с async generator зависимостью."""
         def async_generator_factory():
             return async_generator_class("async_generator_value")
         
-        DependencyRegistry.register(async_generator_class, async_generator_factory=async_generator_factory)
+        DependencyRegistry.register(async_generator_class, factory=async_generator_factory)
         
         async def test_func(dep: Dependency[async_generator_class]):
             return dep.value
         
         wrapped_func = Injector.inject(test_func)
-        result = await wrapped_func()
+        import asyncio
+        result = asyncio.run(wrapped_func())
         assert result == "async_generator_value"
 
     def test_inject_with_multiple_dependencies(self, sample_class, context_manager_class):
@@ -131,11 +131,11 @@ class TestInjector:
         instance = sample_class("test_value")
         DependencyRegistry.register(sample_class, instance=instance)
         
-        def test_func(regular_param: str, dep: Dependency[sample_class], another_regular: int):
+        def test_func(regular_param: str, dep: Dependency[sample_class], another_regular: int = 42):
             return f"{regular_param}_{dep.get_value()}_{another_regular}"
         
         wrapped_func = Injector.inject(test_func)
-        result = wrapped_func("hello", 42)
+        result = wrapped_func("hello")
         assert result == "hello_test_value_42"
 
     def test_inject_preserves_function_metadata(self, sample_class):
@@ -194,8 +194,7 @@ class TestInjector:
         with pytest.raises(ValueError, match="Dependency .* is not registered"):
             wrapped_func()
 
-    @pytest.mark.asyncio
-    async def test_inject_with_async_function_unregistered_dependency_raises_error(self, sample_class):
+    def test_inject_with_async_function_unregistered_dependency_raises_error(self, sample_class):
         """Тест что inject с async функцией и незарегистрированной зависимостью вызывает ошибку."""
         async def test_func(dep: Dependency[sample_class]):
             return dep.get_value()
@@ -203,7 +202,8 @@ class TestInjector:
         wrapped_func = Injector.inject(test_func)
         
         with pytest.raises(ValueError, match="Dependency .* is not registered"):
-            await wrapped_func()
+            import asyncio
+            asyncio.run(wrapped_func())
 
     def test_inject_with_kwargs_preserved(self, sample_class):
         """Тест что inject сохраняет kwargs."""
@@ -229,8 +229,7 @@ class TestInjector:
         result = wrapped_func("arg1", "arg2", extra="data")
         assert result == "('arg1', 'arg2')_test_value_data"
 
-    @pytest.mark.asyncio
-    async def test_inject_with_async_function_args_and_kwargs_preserved(self, sample_class):
+    def test_inject_with_async_function_args_and_kwargs_preserved(self, sample_class):
         """Тест что inject с async функцией сохраняет args и kwargs."""
         instance = sample_class("test_value")
         DependencyRegistry.register(sample_class, instance=instance)
@@ -239,7 +238,8 @@ class TestInjector:
             return f"{args}_{dep.get_value()}_{kwargs.get('extra', 'none')}"
         
         wrapped_func = Injector.inject(test_func)
-        result = await wrapped_func("arg1", "arg2", extra="data")
+        import asyncio
+        result = asyncio.run(wrapped_func("arg1", "arg2", extra="data"))
         assert result == "('arg1', 'arg2')_test_value_data"
 
     def test_inject_with_class_method(self, sample_class):

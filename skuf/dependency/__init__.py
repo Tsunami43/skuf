@@ -1,7 +1,7 @@
 """
-Dependency Injection модуль.
+Dependency Injection module.
 
-Собирает все компоненты в единый класс Dependency для удобного использования.
+Combines all components into a single Dependency class for convenient usage.
 """
 
 from typing import Type, TypeVar, Generic
@@ -15,32 +15,32 @@ __all__ = ["Dependency"]
 
 class Dependency(Generic[T]):
     """
-    Главный класс для работы с dependency injection.
-    Объединяет функциональность регистрации, разрешения и инъекции зависимостей.
+    Main class for dependency injection.
+    Combines functionality for registration, resolution and injection of dependencies.
     
-    Используется как:
-    1. Маркер типа в аннотациях: Dependency[SomeClass]
-    2. Класс для регистрации/разрешения зависимостей
+    Used as:
+    1. Type marker in annotations: Dependency[SomeClass]
+    2. Class for registering/resolving dependencies
     """
 
     @classmethod
     def register(cls, dependency_cls: Type[T], **kwargs) -> None:
-        """Регистрирует зависимость."""
+        """Register a dependency."""
         DependencyRegistry.register(dependency_cls, **kwargs)
 
     @classmethod
     def resolve(cls, dependency_cls: Type[T]) -> T:
-        """Разрешает зависимость."""
+        """Resolve a dependency."""
         return DependencyRegistry.resolve(dependency_cls)
 
     @classmethod
     def clear(cls) -> None:
-        """Очищает реестр зависимостей."""
+        """Clear the dependency registry."""
         DependencyRegistry.clear()
 
     @classmethod
     def inject(cls, func):
-        """Декоратор для автоматической инъекции зависимостей."""
+        """Decorator for automatic dependency injection."""
         return Injector.inject(func)
 
     @classmethod

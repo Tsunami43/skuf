@@ -1,3 +1,17 @@
+Metadata-Version: 2.1
+Name: skuf
+Version: 0.2.1
+Summary: Minimal Dependency Injection & Configuration Framework for Python
+Author-email: Tsunami43 <n3m0_22@mail.ru>
+License: MIT
+Project-URL: Homepage, https://github.com/Tsunami43/skuf.git
+Project-URL: Repository, https://github.com/Tsunami43/skuf.git
+Project-URL: Issues, https://github.com/Tsunami43/skuf/issues
+Keywords: di,dependency-injection,container,python,env
+Requires-Python: >=3.8
+Description-Content-Type: text/markdown
+License-File: LICENSE
+
 # Skuf 
 ![Python](https://img.shields.io/badge/python-3.8%2B-blue?logo=python&logoColor=white)![Version](https://img.shields.io/badge/version-0.2.1-green)
 
@@ -71,7 +85,7 @@ class UnitOfWork:
 def create_uow():
     return UnitOfWork()
 
-Dependency.register(UnitOfWork, factory=create_uow)
+Dependency.register(UnitOfWork, context_manager=create_uow)
 
 # Use with automatic context management (like FastAPI)
 @Dependency.inject

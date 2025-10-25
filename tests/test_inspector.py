@@ -1,5 +1,5 @@
 """
-Тесты для модуля inspector.
+Tests for inspector module.
 """
 import pytest
 from unittest.mock import Mock
@@ -8,11 +8,11 @@ from skuf.dependency.inspector import Inspector
 
 
 class TestInspector:
-    """Тесты для класса Inspector."""
+    """Tests for Inspector class."""
 
     def test_is_context_manager_with_valid_context_manager(self):
-        """Тест проверки context manager с валидным объектом."""
-        # Создаем mock объект с методами context manager
+        """Test context manager check with valid object."""
+        # Create mock object with context manager methods
         obj = Mock()
         obj.__enter__ = Mock()
         obj.__exit__ = Mock()
@@ -20,38 +20,38 @@ class TestInspector:
         assert Inspector.is_context_manager(obj) is True
 
     def test_is_context_manager_without_enter(self):
-        """Тест проверки context manager без __enter__ метода."""
+        """Test context manager check without __enter__ method."""
         obj = Mock()
         obj.__exit__ = Mock()
-        # Удаляем __enter__ метод
+        # Remove __enter__ method
         del obj.__enter__
         
         assert Inspector.is_context_manager(obj) is False
 
     def test_is_context_manager_without_exit(self):
-        """Тест проверки context manager без __exit__ метода."""
+        """Test context manager check without __exit__ method."""
         obj = Mock()
         obj.__enter__ = Mock()
-        # Удаляем __exit__ метод
+        # Remove __exit__ method
         del obj.__exit__
         
         assert Inspector.is_context_manager(obj) is False
 
     def test_is_context_manager_with_regular_object(self):
-        """Тест проверки context manager с обычным объектом."""
+        """Test context manager check with regular object."""
         obj = Mock()
-        # Удаляем оба метода context manager
+        # Remove both context manager methods
         del obj.__enter__
         del obj.__exit__
         
         assert Inspector.is_context_manager(obj) is False
 
     def test_is_context_manager_with_none(self):
-        """Тест проверки context manager с None."""
+        """Test context manager check with None."""
         assert Inspector.is_context_manager(None) is False
 
     def test_is_async_context_manager_with_valid_async_context_manager(self):
-        """Тест проверки async context manager с валидным объектом."""
+        """Test async context manager check with valid object."""
         obj = Mock()
         obj.__aenter__ = Mock()
         obj.__aexit__ = Mock()
@@ -59,38 +59,38 @@ class TestInspector:
         assert Inspector.is_async_context_manager(obj) is True
 
     def test_is_async_context_manager_without_aenter(self):
-        """Тест проверки async context manager без __aenter__ метода."""
+        """Test async context manager check without __aenter__ method."""
         obj = Mock()
         obj.__aexit__ = Mock()
-        # Удаляем __aenter__ метод
+        # Remove __aenter__ method
         del obj.__aenter__
         
         assert Inspector.is_async_context_manager(obj) is False
 
     def test_is_async_context_manager_without_aexit(self):
-        """Тест проверки async context manager без __aexit__ метода."""
+        """Test async context manager check without __aexit__ method."""
         obj = Mock()
         obj.__aenter__ = Mock()
-        # Удаляем __aexit__ метод
+        # Remove __aexit__ method
         del obj.__aexit__
         
         assert Inspector.is_async_context_manager(obj) is False
 
     def test_is_async_context_manager_with_regular_object(self):
-        """Тест проверки async context manager с обычным объектом."""
+        """Test async context manager check with regular object."""
         obj = Mock()
-        # Удаляем оба метода async context manager
+        # Remove both async context manager methods
         del obj.__aenter__
         del obj.__aexit__
         
         assert Inspector.is_async_context_manager(obj) is False
 
     def test_is_async_context_manager_with_none(self):
-        """Тест проверки async context manager с None."""
+        """Test async context manager check with None."""
         assert Inspector.is_async_context_manager(None) is False
 
     def test_is_async_generator_with_valid_async_generator(self):
-        """Тест проверки async generator с валидным объектом."""
+        """Test async generator check with valid object."""
         obj = Mock()
         obj.__aiter__ = Mock()
         obj.__anext__ = Mock()
@@ -98,19 +98,19 @@ class TestInspector:
         assert Inspector.is_async_generator(obj) is True
 
     def test_is_async_generator_without_aiter(self):
-        """Тест проверки async generator без __aiter__ метода."""
+        """Test async generator check without __aiter__ method."""
         obj = Mock()
         obj.__anext__ = Mock()
-        # Удаляем __aiter__ метод
+        # Remove __aiter__ method
         del obj.__aiter__
         
         assert Inspector.is_async_generator(obj) is False
 
     def test_is_async_generator_without_anext(self):
-        """Тест проверки async generator без __anext__ метода."""
+        """Test async generator check without __anext__ method."""
         obj = Mock()
         obj.__aiter__ = Mock()
-        # Удаляем __anext__ метод
+        # Remove __anext__ method
         del obj.__anext__
         
         assert Inspector.is_async_generator(obj) is False
