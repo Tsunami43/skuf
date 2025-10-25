@@ -2,7 +2,7 @@ import asyncio
 from contextlib import contextmanager, asynccontextmanager
 from unittest import TestCase
 
-from skuf import DIContainer, ContextDependency, AsyncContextDependency
+from skuf import Dependency
 
 
 class TestContextManagers(TestCase):
@@ -10,11 +10,11 @@ class TestContextManagers(TestCase):
 
     def setUp(self):
         """Очистка контейнера перед каждым тестом."""
-        DIContainer.clear()
+        Dependency.clear()
 
     def tearDown(self):
         """Очистка контейнера после каждого теста."""
-        DIContainer.clear()
+        Dependency.clear()
 
     def test_register_context_manager(self):
         """Тест регистрации контекстного менеджера."""
@@ -35,13 +35,16 @@ class TestContextManagers(TestCase):
             return MockResource()
 
         # Регистрируем контекстный менеджер
-        DIContainer.register(MockResource, context_manager=create_resource)
+        Dependency.register(MockResource, context_manager=create_resource)
 
         # Проверяем, что можем получить контекстный менеджер
-        with ContextDependency(MockResource) as resource:
+        @Dependency.inject
+        def test_function(resource: Dependency[MockResource]):
             self.assertTrue(resource.initialized)
             self.assertFalse(resource.cleaned_up)
+            return resource
 
+        resource = test_function()
         # Проверяем, что ресурс был очищен
         self.assertTrue(resource.cleaned_up)
 
@@ -64,7 +67,7 @@ class TestContextManagers(TestCase):
             return MockAsyncResource()
 
         # Регистрируем асинхронный контекстный менеджер
-        DIContainer.register(MockAsyncResource, async_context_manager=create_async_resource)
+        Dependency.register(MockAsyncResource, async_context_manager=create_async_resource)
 
         async def test_async_context():
             async with AsyncContextDependency(MockAsyncResource) as resource:
@@ -98,7 +101,7 @@ class TestContextManagers(TestCase):
         def create_resource():
             return MockResource()
 
-        DIContainer.register(MockResource, context_manager=create_resource)
+        Dependency.register(MockResource, context_manager=create_resource)
 
         # Тест с исключением
         with self.assertRaises(ValueError):
@@ -131,7 +134,7 @@ class TestContextManagers(TestCase):
         def create_async_resource():
             return MockAsyncResource()
 
-        DIContainer.register(MockAsyncResource, async_context_manager=create_async_resource)
+        Dependency.register(MockAsyncResource, async_context_manager=create_async_resource)
 
         async def test_async_context_with_exception():
             with self.assertRaises(ValueError):
@@ -171,7 +174,7 @@ class TestContextManagers(TestCase):
         instance = MockResource("instance")
 
         # Тест 1: instance имеет приоритет над context_manager
-        DIContainer.register(
+        Dependency.register(
             MockResource,
             instance=instance,
             context_manager=context_factory
@@ -182,7 +185,7 @@ class TestContextManagers(TestCase):
         DIContainer.clear()
 
         # Тест 2: factory имеет приоритет над context_manager
-        DIContainer.register(
+        Dependency.register(
             MockResource,
             factory=regular_factory,
             context_manager=context_factory
@@ -193,7 +196,7 @@ class TestContextManagers(TestCase):
         DIContainer.clear()
 
         # Тест 3: context_manager имеет приоритет над async_context_manager
-        DIContainer.register(
+        Dependency.register(
             MockResource,
             context_manager=context_factory,
             async_context_manager=async_context_factory
@@ -218,7 +221,7 @@ class TestContextManagers(TestCase):
             pass
 
         # Регистрируем неправильный тип
-        DIContainer.register(MockResource, context_manager="not_callable")
+        Dependency.register(MockResource, context_manager="not_callable")
 
         with self.assertRaises(TypeError):
             ContextDependency(MockResource)
@@ -229,7 +232,7 @@ class TestContextManagers(TestCase):
             pass
 
         # Регистрируем неправильный тип
-        DIContainer.register(MockAsyncResource, async_context_manager="not_callable")
+        Dependency.register(MockAsyncResource, async_context_manager="not_callable")
 
         with self.assertRaises(TypeError):
             AsyncContextDependency(MockAsyncResource)

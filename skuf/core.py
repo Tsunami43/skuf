@@ -199,6 +199,23 @@ class Dependency:
                         func = cls._wrap_async_function_with_context(func, param_name, dependency_cls)
                     else:
                         func = cls._wrap_function_with_context(func, param_name, dependency_cls)
+                # Also check for direct Dependency annotation (for backward compatibility)
+                elif param.annotation is Dependency:
+                    # This is a fallback for cases where Dependency is used directly
+                    # We need to get the type from the default value or raise an error
+                    if param.default != inspect.Parameter.empty:
+                        # Try to get the type from the default value
+                        if hasattr(param.default, '__class__'):
+                            dependency_cls = param.default.__class__
+                        else:
+                            continue
+                    else:
+                        continue
+                    
+                    if is_async:
+                        func = cls._wrap_async_function_with_context(func, param_name, dependency_cls)
+                    else:
+                        func = cls._wrap_function_with_context(func, param_name, dependency_cls)
         
         return func
 

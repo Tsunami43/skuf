@@ -2,7 +2,7 @@ import os
 from typing import List
 from unittest import TestCase
 
-from skuf import DIContainer, BaseSettings
+from skuf import Dependency, BaseSettings
 
 
 class Logger:
@@ -24,7 +24,7 @@ class Dummy:
 
 class TestSkuf(TestCase):
     def setUp(self):
-        DIContainer.clear()
+        Dependency.clear()
 
 
 class TestSetUpBaseSettings(TestCase):
