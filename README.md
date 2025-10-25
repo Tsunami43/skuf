@@ -167,7 +167,7 @@ API_KEY=supersecret
 TIMEOUT=5
 DEBUG=true
 RETRIES=3
-ADMINS=123|456
+ADMINS=123,456
 
 # settings.py
 from skuf import BaseSettings
@@ -190,4 +190,4 @@ print(settings.admins)    # [123, 456]
 
 ✅ Supports types:
 * str, int, float, bool
-* List[str], List[int], List[float] (via pipe-separated values like A|B|C)
+* List[str], List[int], List[float] (via comma-separated values like A,B,C)

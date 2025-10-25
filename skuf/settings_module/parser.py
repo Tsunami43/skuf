@@ -28,7 +28,7 @@ class Parser:
 
         if origin in (list, List):
             subtype = typ.__args__[0]
-            parts = [p.strip() for p in raw_value.split("|")]
+            parts = [p.strip() for p in raw_value.split(",")]
             if subtype is int:
                 return [int(p) for p in parts if p.lstrip("-").isdigit()]
             if subtype is float:

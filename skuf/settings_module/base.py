@@ -21,7 +21,7 @@ class BaseSettings:
     - int
     - float
     - bool (true, 1, yes, on)
-    - List[int], List[float], List[str] (pipe-separated: "1|2|3")
+    - List[int], List[float], List[str] (comma-separated: "1,2,3")
 
     Example usage:
 
