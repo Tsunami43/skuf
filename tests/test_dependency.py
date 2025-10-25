@@ -18,7 +18,7 @@ class TestDependency:
         
         with patch.object(DependencyRegistry, 'register') as mock_register:
             Dependency.register(sample_class, instance=instance)
-            mock_register.assert_called_once_with(sample_class, instance=instance)
+            mock_register.assert_called_once_with(sample_class, instance=instance, factory=None)
 
     def test_resolve_delegates_to_registry(self, sample_class):
         """Test that resolve delegates call to DependencyRegistry."""

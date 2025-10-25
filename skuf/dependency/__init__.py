@@ -4,7 +4,7 @@ Dependency Injection module.
 Combines all components into a single Dependency class for convenient usage.
 """
 
-from typing import Type, TypeVar, Generic
+from typing import Callable, Optional, Type, TypeVar, Generic
 
 from .types import T, Dependency as DependencyType
 from .registry import DependencyRegistry
@@ -24,9 +24,11 @@ class Dependency(Generic[T]):
     """
 
     @classmethod
-    def register(cls, dependency_cls: Type[T], **kwargs) -> None:
+    def register(cls, dependency_cls: Type[T], *,
+        instance: Optional[T] = None,
+        factory: Optional[Callable[[], T]] = None) -> None:
         """Register a dependency."""
-        DependencyRegistry.register(dependency_cls, **kwargs)
+        DependencyRegistry.register(dependency_cls, instance=instance, factory=factory)
 
     @classmethod
     def resolve(cls, dependency_cls: Type[T]) -> T:
