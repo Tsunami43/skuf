@@ -2,21 +2,36 @@
 name = "skuf"
 version = "0.2.1"
 description = "Minimal Dependency Injection & Configuration Framework for Python"
-repository = "https://github.com/Tsunami43/skuf.git"
-keywords = ["di", "dependency-injection", "container", "python", "env"]
-license = "MIT"
-authors = [
-    {name = "MentorSisek",email = "n3m0_22@mail.ru"}
-]
 readme = "README.md"
-requires-python = ">=3.7"
-dependencies = [
+requires-python = ">=3.8"
+license = {text = "MIT"}
+authors = [
+    {name = "Tsunami43", email = "n3m0_22@mail.ru"}
+]
+keywords = ["di", "dependency-injection", "container", "python", "env"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: Software Development :: Libraries :: Application Frameworks",
 ]
 
-[tool.poetry.urls]
-"Homepage" = "https://github.com/Tsunami43/skuf.git"
-
+[project.urls]
+Homepage = "https://github.com/Tsunami43/skuf.git"
+Repository = "https://github.com/Tsunami43/skuf.git"
+Issues = "https://github.com/Tsunami43/skuf/issues"
 
 [build-system]
-requires = ["poetry-core>=2.0.0,<3.0.0"]
-build-backend = "poetry.core.masonry.api"
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["skuf*"]
